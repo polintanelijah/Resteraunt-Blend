@@ -114,10 +114,11 @@ def get_categories_from_restaurants(restaurant_names, location):
     all_categories = []
     for name in restaurant_names:
         r = search_restaurants(location, name)
-        restaurant = r[0]
-        if restaurant:
-            categories = [c["title"] for c in restaurant.get("categories", [])]
-            all_categories.extend(categories)
+        if r:
+            restaurant = r[0]
+            if restaurant:
+                categories = [c["title"] for c in restaurant.get("categories", [])]
+                all_categories.extend(categories)
         else:
             print(f"⚠️ No exact match found for '{name}'")
     return list(set(all_categories))
