@@ -5,10 +5,10 @@ import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from helper import *
 
-YELP_API_KEY = ""
+YELP_API_KEY = "mWUBF5oFXaHRmYO85IB4OroRnCZY_FZRWSMpNaI3Xxv3pSOIkgbed1Lat3-sYtBG2vBynsJb7Efk6U75khaZhs6v9gFs2ZSDxAntZ-DU-AC7xSBs271eXqDj-HiKaHYx"
 HEADERS = {"Authorization": f"Bearer {YELP_API_KEY}"}
 
-GEMINI_API_KEY = ""
+GEMINI_API_KEY = "AIzaSyCqgF4x2PCaWZM-SMP2oopL1mE8AxYxBgI"
 
 if __name__ == "__main__":
     user1_location = input("User 1 Location: ")
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     # === Categories ===
     categories1 = get_categories_from_restaurants(user1, user1_location)
     categories2 = get_categories_from_restaurants(user2, user2_location)
-    combined_categories = list(set(categories1 + categories2))[:10]
+    combined_categories = combine_categories_from_restaurants(categories1, categories2)
 
     print("🔍 Search categories:", combined_categories)
     price = input("Restaurant price levels (1, 2, 3, 4): ")
