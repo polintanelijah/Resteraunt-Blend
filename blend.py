@@ -5,10 +5,10 @@ import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from helper import *
 
-YELP_API_KEY = "mWUBF5oFXaHRmYO85IB4OroRnCZY_FZRWSMpNaI3Xxv3pSOIkgbed1Lat3-sYtBG2vBynsJb7Efk6U75khaZhs6v9gFs2ZSDxAntZ-DU-AC7xSBs271eXqDj-HiKaHYx"
+YELP_API_KEY = ""
 HEADERS = {"Authorization": f"Bearer {YELP_API_KEY}"}
 
-GEMINI_API_KEY = "AIzaSyCqgF4x2PCaWZM-SMP2oopL1mE8AxYxBgI"
+GEMINI_API_KEY = ""
 
 if __name__ == "__main__":
     user1_location = input("User 1 Location: ")

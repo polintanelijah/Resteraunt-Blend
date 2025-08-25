@@ -4,11 +4,11 @@ from google.genai import types
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
-YELP_API_KEY = "mWUBF5oFXaHRmYO85IB4OroRnCZY_FZRWSMpNaI3Xxv3pSOIkgbed1Lat3-sYtBG2vBynsJb7Efk6U75khaZhs6v9gFs2ZSDxAntZ-DU-AC7xSBs271eXqDj-HiKaHYx"
+YELP_API_KEY = ""
 HEADERS = {"Authorization": f"Bearer {YELP_API_KEY}"}
-YELP_BASE_URL = "https://api.yelp.com/v3/businesses/search"
+YELP_BASE_URL = ""
 
-GEMINI_API_KEY = "AIzaSyCqgF4x2PCaWZM-SMP2oopL1mE8AxYxBgI"
+GEMINI_API_KEY = ""
 
 def get_restaurant_data(name, location):
     url = "https://api.yelp.com/v3/businesses/search"
