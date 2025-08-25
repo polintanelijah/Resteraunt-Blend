@@ -42,7 +42,7 @@ if __name__ == "__main__":
     # === Categories ===
     categories1 = get_categories_from_restaurants(user1, user1_location)
     categories2 = get_categories_from_restaurants(user2, user2_location)
-    combined_categories = list(set(categories1 + categories2))[:10]
+    combined_categories = combine_categories_from_restaurants(categories1, categories2)
 
     print("🔍 Search categories:", combined_categories)
     price = input("Restaurant price levels (1, 2, 3, 4): ")

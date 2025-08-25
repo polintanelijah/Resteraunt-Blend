@@ -6,7 +6,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 YELP_API_KEY = ""
 HEADERS = {"Authorization": f"Bearer {YELP_API_KEY}"}
-YELP_BASE_URL = "https://api.yelp.com/v3/businesses/search"
+YELP_BASE_URL = ""
 
 GEMINI_API_KEY = ""
 
@@ -111,18 +111,37 @@ def find_restaurant_exact(name, location):
 
 def get_categories_from_restaurants(restaurant_names, location):
     """Return list of category titles from the found restaurants."""
-    all_categories = []
+    all_categories = {}
     for name in restaurant_names:
         r = search_restaurants(location, name)
         if r:
             restaurant = r[0]
             if restaurant:
                 categories = [c["title"] for c in restaurant.get("categories", [])]
-                all_categories.extend(categories)
+                for category in categories:
+                    if category not in all_categories:
+                        all_categories[category] = restaurant_names[name]
+                    else:
+                        all_categories[category] = (all_categories[category] + restaurant_names[name]) / 2
+
         else:
             print(f"⚠️ No exact match found for '{name}'")
-    return list(set(all_categories))
+    
+    return all_categories
+    
+def combine_categories_from_restaurants(user1_categories, user2_categories):
+    combined = {}
+    for category, weight in user1_categories.items():
+        combined[category] = weight
+    for category, weight in user2_categories.items():
+        if category in combined:
+            combined[category] = (combined[category] + weight) / 2
+        else:
+            combined[category] = weight / 2
+    combined = dict(sorted(combined.items(), key=lambda item: item[1], reverse=True))
+    
 
+    return list(combined.keys())[:5]
 
 def get_recommendations(categories, location, price=None):
     """Search Yelp for restaurants matching given categories."""
