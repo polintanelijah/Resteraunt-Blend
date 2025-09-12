@@ -1,4 +1,5 @@
 import requests
+import pandas as pd
 from google import genai
 from google.genai import types
 import numpy as np
