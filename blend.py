@@ -11,24 +11,31 @@ HEADERS = {"Authorization": f"Bearer {YELP_API_KEY}"}
 GEMINI_API_KEY = ""
 
 if __name__ == "__main__":
-    user1_location = input("User 1 Location: ")
-    user2_location = input("User 2 Location: ")
-
-    # === Get inputs ===
-    user1 = {}
-    user2 = {}
-    for i in range(3):
+    user1 = pd.DataFrame()
+    typeFreq = defaultdict(int)
+    r = ""
+    
+    while r != "stop":
         r = input("User 1 - Enter restaurant: ")
-        rating = float(input("User 1 - Enter rating: "))
-        user1[r] = rating
+        if r == "stop":
+            break
+        #rRating = float(input("Enter rating: "))
 
-    for i in range(3):
-        r = input("User 2 - Enter restaurant: ")
-        rating = float(input("User 2 - Enter rating: "))
-        user2[r] = rating
+        rData = get_restaurant_data(r)
 
-    excluded = set(user1.keys()) | set(user2.keys())
+        categories = rData["Categories"].iloc[0].split(", ")
+        for c in categories:
+            typeFreq[c] += 1
+            
 
+        embeddingString = rData["Categories"].iloc[0] + rData["Reviews"].iloc[0]
+        rData["Embedding"] = [get_restaurant_embedding(embeddingString)]
+        rData["Rating"] = 0
+
+        user1 = pd.concat([user1, rData])
+    
+    print(typeFreq)
+    #print(user1)
     # === Embeddings ===
     emb1 = weighted_embedding(user1, user1_location)
     emb2 = weighted_embedding(user2, user2_location)
@@ -73,3 +80,4 @@ if __name__ == "__main__":
             print(f"{i}. {r['name']} - {r['rating']}⭐ | Similarity: {score:.4f}")
     else:
         print("No matching restaurants found.")
+
