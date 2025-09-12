@@ -1,3 +1,8 @@
+from google.maps import places_v1
+from google.type import latlng_pb2
+import pandas as pd
+
+API_KEY = "AIzaSyCvyaP2iLvENkLBAIqy_2hhyBVRJSrxVQk"
 def get_restaurant_data(resName):
     client = places_v1.PlacesClient(
         client_options={"api_key": API_KEY}
@@ -51,3 +56,55 @@ def get_restaurant_data(resName):
         index=[name],
     )
     return df
+
+def temp_category_combination(df):
+
+    all_categories = {}
+    for row in df.itertuples():
+        for category in row.Categories.split(", "):
+            if category not in all_categories:
+                all_categories[category] = row.Rating
+            else:
+                all_categories[category] = (all_categories[category] + df[row.Index, "Rating"]) / 2
+
+
+async def output_recommendation(categories, location):
+    # Coordinates and radius for the location bias
+    lat = 51.516177
+    lng = -0.127245
+    radius_meters = 1000.0
+    # Create the LatLng object for the center
+    center_point = latlng_pb2.LatLng(latitude=lat, longitude=lng)
+    # Create the Circle object
+    circle_area = places_v1.types.Circle(
+        center=center_point,
+        radius=radius_meters
+    )
+    # Create the location bias circle
+    location_bias = places_v1.SearchTextRequest.LocationBias(
+        circle=circle_area
+    )
+    # Define the search query and other parameters
+    search_query = "restaurants with outdoor seating"
+    min_place_rating = 4.0
+    client = places_v1.PlacesAsyncClient(
+        client_options={"api_key": API_KEY}
+    )
+    # Build the request
+    request = places_v1.SearchTextRequest(
+        text_query=search_query,
+        location_bias=location_bias,
+        min_rating=min_place_rating,
+        open_now=False,
+        price_levels=[
+            places_v1.types.PriceLevel.PRICE_LEVEL_MODERATE,
+            places_v1.types.PriceLevel.PRICE_LEVEL_EXPENSIVE
+        ]
+    )
+    # Set the field mask
+    fieldMask = "places.formattedAddress,places.displayName,places.id,places.types"
+    # Make the request
+    response = await client.search_text(request=request, metadata=[("x-goog-fieldmask",fieldMask)])
+    return response
+    x = await text_search()
+        
