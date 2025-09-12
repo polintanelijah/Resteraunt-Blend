@@ -1,5 +1,6 @@
 import requests
 import pandas as pd
+from collections import defaultdict
 from google import genai
 from google.genai import types
 import numpy as np
@@ -38,6 +39,7 @@ if __name__ == "__main__":
     print(typeFreq)
     #print(user1)
     # === Embeddings ===
+    
     emb1 = weighted_embedding(user1, user1_location)
     emb2 = weighted_embedding(user2, user2_location)
 
