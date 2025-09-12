@@ -62,12 +62,17 @@ def temp_category_combination(user1, user2):
 
     all_categories = {}
     for row in user1.itertuples():
-        for category in row.Categories.split(", "):
-            if category not in all_categories:
-                all_categories[category] = row.Rating
-            else:
-                all_categories[category] = (all_categories[category] + df[row.Index, "Rating"]) / 2
 
+        categories = row.Categories.split(", ")
+        rating = row.Rating
+        for category in categories:
+            if category not in all_categories:
+                all_categories[category] = rating
+            else:
+                all_categories[category] = (all_categories[category] + rating) / 2
+
+    combined = dict(sorted(all_categories.items(), key=lambda item: item[1], reverse=True))
+    return list(combined.keys())[:5]
 
 
 async def output_recommendation(categories, location, price_level):
@@ -119,6 +124,21 @@ async def output_recommendation(categories, location, price_level):
     fieldMask = "places.formattedAddress,places.displayName,places.id,places.types"
     # Make the request
     response = await client.search_text(request=request, metadata=[("x-goog-fieldmask",fieldMask)])
-    return response
-    x = await text_search() 
-        
+    
+    list_of_ids = []
+    list_of_places = []
+    list_of_types = []
+
+    for place in response.places:
+        list_of_ids.append(place.id)
+        list_of_places.append(place.display_name.text)
+        list_of_types.append(place.types)
+
+    rec_df = pd.DataFrame(
+        {
+            "ID": list_of_ids,
+            "Name": list_of_places,
+            "Types": list_of_types
+        }
+    )
+    return rec_df
