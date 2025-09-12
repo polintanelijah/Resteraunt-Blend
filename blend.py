@@ -21,7 +21,7 @@ if __name__ == "__main__":
         r = input("User 1 - Enter restaurant: ")
         if r == "stop":
             break
-        #rRating = float(input("Enter rating: "))
+        rRating = float(input("Enter rating: "))
 
         rData = get_restaurant_data(r)
 
@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
         embeddingString = rData["Categories"].iloc[0] + rData["Reviews"].iloc[0]
         rData["Embedding"] = [get_restaurant_embedding(embeddingString)]
-        rData["Rating"] = 0
+        rRating["Rating"] = 0
 
         user1 = pd.concat([user1, rData])
     

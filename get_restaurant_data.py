@@ -57,10 +57,11 @@ def get_restaurant_data(resName):
     )
     return df
 
-def temp_category_combination(df):
+# Fixed function to combine categories with average ratings
+def temp_category_combination(user1, user2):
 
     all_categories = {}
-    for row in df.itertuples():
+    for row in user1.itertuples():
         for category in row.Categories.split(", "):
             if category not in all_categories:
                 all_categories[category] = row.Rating
@@ -68,11 +69,25 @@ def temp_category_combination(df):
                 all_categories[category] = (all_categories[category] + df[row.Index, "Rating"]) / 2
 
 
-async def output_recommendation(categories, location):
-    # Coordinates and radius for the location bias
-    lat = 51.516177
-    lng = -0.127245
-    radius_meters = 1000.0
+
+async def output_recommendation(categories, location, price_level):
+    if price_level == 1:
+        price = places_v1.types.PriceLevel.PRICE_LEVEL_INEXPENSIVE
+    elif price_level == 2:
+        price = places_v1.types.PriceLevel.PRICE_LEVEL_MODERATE
+    elif price_level == 3:
+        price = places_v1.types.PriceLevel.PRICE_LEVEL_EXPENSIVE
+    elif price_level == 4:
+        price = places_v1.types.PriceLevel.PRICE_LEVEL_VERY_EXPENSIVE
+
+
+
+    # Coordinates and radius for Columbus
+    lat = 39.9625
+    lng = -83.0032
+    radius_meters = 50000.0 # ~30 mile radius
+
+
     # Create the LatLng object for the center
     center_point = latlng_pb2.LatLng(latitude=lat, longitude=lng)
     # Create the Circle object
@@ -85,7 +100,7 @@ async def output_recommendation(categories, location):
         circle=circle_area
     )
     # Define the search query and other parameters
-    search_query = "restaurants with outdoor seating"
+    search_query =  str(categories)
     min_place_rating = 4.0
     client = places_v1.PlacesAsyncClient(
         client_options={"api_key": API_KEY}
@@ -97,8 +112,7 @@ async def output_recommendation(categories, location):
         min_rating=min_place_rating,
         open_now=False,
         price_levels=[
-            places_v1.types.PriceLevel.PRICE_LEVEL_MODERATE,
-            places_v1.types.PriceLevel.PRICE_LEVEL_EXPENSIVE
+            price
         ]
     )
     # Set the field mask
@@ -106,5 +120,5 @@ async def output_recommendation(categories, location):
     # Make the request
     response = await client.search_text(request=request, metadata=[("x-goog-fieldmask",fieldMask)])
     return response
-    x = await text_search()
+    x = await text_search() 
         
